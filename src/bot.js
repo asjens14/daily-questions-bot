@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import "./utils/scheduler.js";
 
 dotenv.config();
 
