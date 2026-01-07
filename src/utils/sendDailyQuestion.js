@@ -1,9 +1,7 @@
 // This utility will send a daily question to a Discord channel using a webhook
-// For now, it sends a placeholder message. You will later update this to pull from your questions store.
 
 import fetch from "node-fetch";
 import fs from "node:fs/promises";
-import path from "node:path";
 const queuePath = new URL("../../queue.json", import.meta.url);
 
 export async function sendDailyQuestion() {
