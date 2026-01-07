@@ -24,6 +24,5 @@ export default {
       displayName,
       interaction.options.getString("question")
     );
-    // await sendDailyQuestion(); //replace with actual handling
   },
 };
