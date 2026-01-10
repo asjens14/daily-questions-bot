@@ -1,13 +1,18 @@
 import { saveQuestion } from "./saveQuestion.js";
 import { sendToMods } from "./sendToMods.js";
 
-export async function handleQuestionSubmit(avatar, nickname, questionText) {
+export async function handleQuestionSubmit(
+  channel,
+  avatar,
+  nickname,
+  questionText
+) {
   console.log("message saved");
 
-  const SEND_TO_MODS = false;
+  const SEND_TO_MODS = true;
 
   if (SEND_TO_MODS) {
-    sendToMods(avatar, nickname, questionText);
+    sendToMods(channel, avatar, nickname, questionText);
   } else {
     saveQuestion(avatar, nickname, questionText);
   }

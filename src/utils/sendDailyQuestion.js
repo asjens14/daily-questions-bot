@@ -51,7 +51,7 @@ export async function sendDailyQuestion() {
     avatar_url:
       "https://cdn.discordapp.com/avatars/1375237397578649732/9f00a4299abce52f6da33c3a84aaadce.webp?size=128",
     username: "Daily Question Bot",
-    content: "<@&1458540863927095451>", // replace with id of the role
+    content: `<@&${process.env.PING_ROLE_ID}>`, // replace with id of the role
   };
 
   try {

@@ -19,7 +19,11 @@ export default {
     const displayName =
       interaction.member?.displayName || interaction.user.username;
 
+    // Fetch the approval channel and pass it to handleQuestionSubmit
+    const channelId = process.env.DQ_APPROVAL_CHANNEL_ID;
+    const channel = await interaction.client.channels.fetch(channelId);
     await handleQuestionSubmit(
+      channel,
       interaction.user.avatarURL(),
       displayName,
       interaction.options.getString("question")

@@ -84,7 +84,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 // Listen for messages in a specific channel that start with !dq
 // client.on("messageCreate", (message) => {
 //   // Replace with your target channel ID
-//   const targetChannelId = process.env.DQ_CHANNEL_ID;
+//   const targetChannelId = process.env.DQ_SUBMIT_CHANNEL_ID;
 //   if (
 //     message.channel.id === targetChannelId &&
 //     message.content.startsWith("!dq") &&
