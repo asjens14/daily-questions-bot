@@ -3,6 +3,7 @@ import {
   Collection,
   Events,
   GatewayIntentBits,
+  MessageFlags,
   Partials,
 } from "discord.js";
 import dotenv from "dotenv";
