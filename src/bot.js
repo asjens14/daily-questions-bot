@@ -31,7 +31,7 @@ client.commands = new Collection();
 
 const foldersPath = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
-  "commands"
+  "commands",
 );
 const commandFolders = fs.readdirSync(foldersPath);
 
@@ -49,7 +49,7 @@ for (const folder of commandFolders) {
       client.commands.set(command.data.name, command);
     } else {
       console.log(
-        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
       );
     }
   }
@@ -79,6 +79,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
         flags: MessageFlags.Ephemeral,
       });
     }
+  }
+});
+
+import cuteCommand from "./commands/cute/cute.js";
+client.on("messageCreate", async (message) => {
+  if (message.content.startsWith("!cute") && !message.author.bot) {
+    await cuteCommand.execute(message);
   }
 });
 
