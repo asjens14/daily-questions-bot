@@ -40,7 +40,7 @@ export default {
     );
     if (activeMembers.size === 0) {
       return message.channel.send(
-        `Looks like you are the only cutie here, <@${message.author.id}>`,
+        `Looks like you are the only cutie here, <@${message.author.id}> :3`,
       );
     }
     const randomMember = activeMembers.random();
