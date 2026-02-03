@@ -20,6 +20,7 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildPresences,
   ],
   partials: [Partials.Channel],
 });
@@ -83,10 +84,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
-import cuteCommand from "./commands/cute/cute.js";
 client.on("messageCreate", async (message) => {
-  if (message.content.startsWith("!cute") && !message.author.bot) {
-    await cuteCommand.execute(message);
+  const regex = /\bcraz(y|ier|iest|iness|ily|ed|es)?\b/i;
+
+  if (regex.test(message.content) && !message.author.bot) {
+    await message.react("🐀");
   }
 });
 
