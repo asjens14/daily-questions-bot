@@ -19,6 +19,8 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildPresences,
   ],
   partials: [Partials.Channel],
 });
@@ -31,7 +33,7 @@ client.commands = new Collection();
 
 const foldersPath = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
-  "commands"
+  "commands",
 );
 const commandFolders = fs.readdirSync(foldersPath);
 
@@ -49,7 +51,7 @@ for (const folder of commandFolders) {
       client.commands.set(command.data.name, command);
     } else {
       console.log(
-        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
       );
     }
   }
@@ -79,6 +81,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
         flags: MessageFlags.Ephemeral,
       });
     }
+  }
+});
+
+client.on("messageCreate", async (message) => {
+  const regex = /\bcraz(y|ier|iest|iness|ily|ed|es)?\b/i;
+
+  if (regex.test(message.content) && !message.author.bot) {
+    await message.react("🐀");
   }
 });
 
