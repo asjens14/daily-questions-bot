@@ -1,16 +1,15 @@
-// This utility will send a daily question to a Discord channel using a webhook
-
-import fetch from "node-fetch";
+import { EmbedBuilder } from "discord.js";
 import fs from "node:fs/promises";
+// import { client } from "../bot.js";
 const queuePath = new URL("../../queue.json", import.meta.url);
 
-export async function sendDailyQuestion() {
+export async function sendDailyQuestion(channel) {
   console.log("Sending daily question...");
-  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
-  if (!webhookUrl) {
-    console.error("DISCORD_WEBHOOK_URL not set in .env");
-    return;
-  }
+  // const channelId = process.env.DAILY_QUESTION_CHANNEL_ID;
+  // if (!channelId) {
+  //   console.error("DAILY_QUESTION_CHANNEL_ID not set in .env");
+  //   return;
+  // }
 
   // Read the queue
   let data;
@@ -34,35 +33,17 @@ export async function sendDailyQuestion() {
   // Save the updated queue
   await fs.writeFile(queuePath, JSON.stringify(data, null, 2), "utf-8");
 
-  // Prepare the payload
-  const payload = {
-    components: [],
-    embeds: [
-      {
-        color: 413059,
-        title: `Daily Question #${data.questionNumber}`,
-        author: {
-          name: `${nickname}`,
-          icon_url: `${avatar}`,
-        },
-        description: questionText,
-      },
-    ],
-    avatar_url:
-      "https://cdn.discordapp.com/avatars/1375237397578649732/9f00a4299abce52f6da33c3a84aaadce.webp?size=128",
-    username: "Daily Question Bot",
-    content: `<@&${process.env.PING_ROLE_ID}>`, // replace with id of the role
-  };
+  const embed = new EmbedBuilder()
+    .setColor(413059)
+    .setTitle(`Daily Question #${data.questionNumber}`)
+    .setAuthor({ name: nickname, iconURL: avatar })
+    .setDescription(questionText);
 
   try {
-    const response = await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+    await channel.send({
+      content: `<@&${process.env.PING_ROLE_ID}>`,
+      embeds: [embed],
     });
-    if (!response.ok) {
-      throw new Error(`Error sending webhook: ${response.statusText}`);
-    }
     console.log("Daily question sent!");
   } catch (error) {
     console.error("Failed to send daily question:", error);

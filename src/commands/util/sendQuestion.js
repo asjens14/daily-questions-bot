@@ -13,6 +13,8 @@ export default {
     const displayName =
       interaction.member?.displayName || interaction.user.username;
 
-    await sendDailyQuestion();
+    const channelId = process.env.DQ_SEND_CHANNEL_ID;
+    const channel = await interaction.client.channels.fetch(channelId);
+    await sendDailyQuestion(channel);
   },
 };
