@@ -5,15 +5,17 @@ export async function handleQuestionSubmit(
   channel,
   avatar,
   nickname,
-  questionText
+  questionText,
+  weekDay = null,
+  category = null
 ) {
   console.log("message saved");
 
   const SEND_TO_MODS = true;
 
   if (SEND_TO_MODS) {
-    sendToMods(channel, avatar, nickname, questionText);
+    sendToMods(channel, avatar, nickname, questionText, weekDay, category);
   } else {
-    saveQuestion(avatar, nickname, questionText);
+    saveQuestion(avatar, nickname, questionText, weekDay, category);
   }
 }

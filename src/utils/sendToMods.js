@@ -5,14 +5,17 @@ import {
   EmbedBuilder,
 } from "discord.js";
 
+
 import { saveQuestion } from "./saveQuestion.js";
 
-export async function sendToMods(channel, avatar, nickname, questionText) {
+export async function sendToMods(channel, avatar, nickname, questionText, weekDay = null, category = null) {
   const embed = new EmbedBuilder()
     .setColor(413059)
     .setTitle("New Daily Question Submission")
     .setAuthor({ name: nickname, iconURL: avatar })
     .setDescription(questionText);
+  if (category) embed.addFields({ name: "Category", value: category });
+  if (weekDay) embed.addFields({ name: "Week Day", value: weekDay });
 
   const row = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
@@ -42,7 +45,7 @@ export async function sendToMods(channel, avatar, nickname, questionText) {
         embeds: [embed],
         components: [],
       });
-      await saveQuestion(avatar, nickname, questionText);
+      await saveQuestion(avatar, nickname, questionText, weekDay, category);
     } else if (interaction.customId === "reject") {
       await interaction.update({
         content: "❌ Rejected",

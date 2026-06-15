@@ -60,11 +60,21 @@ export default {
     // Fetch the approval channel and pass it to handleQuestionSubmit
     const channelId = process.env.DQ_APPROVAL_CHANNEL_ID;
     const channel = await interaction.client.channels.fetch(channelId);
+    // Determine if the weekday subcommand was used
+    const subcommand = interaction.options.getSubcommand();
+    let weekDay = null;
+    let category = null;
+    if (subcommand === "weekday") {
+      weekDay = interaction.options.getString("week_day");
+      category = interaction.options.getString("category");
+    }
     await handleQuestionSubmit(
       channel,
       interaction.user.avatarURL(),
       displayName,
-      interaction.options.getString("question")
+      interaction.options.getString("question"),
+      weekDay,
+      category
     );
   },
 };

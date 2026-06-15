@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 const filePath = new URL("../../queue.json", import.meta.url);
 
-export async function saveQuestion(avatar, nickname, questionText) {
+export async function saveQuestion(avatar, nickname, questionText, weekDay = null, category = null) {
   console.log("Saving question...");
   let data;
   try {
@@ -20,6 +20,8 @@ export async function saveQuestion(avatar, nickname, questionText) {
     avatar,
     nickname,
     questionText,
+    weekDay,
+    category,
   });
 
   await fs.writeFile(filePath, JSON.stringify(data, null, 2), "utf-8");

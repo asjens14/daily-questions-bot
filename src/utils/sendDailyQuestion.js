@@ -26,18 +26,22 @@ export async function sendDailyQuestion(channel) {
     return;
   }
 
+
   // Get and remove the first question
-  const { avatar, nickname, questionText } = data.questions.shift();
+  const { avatar, nickname, questionText, weekDay, category } = data.questions.shift();
   data.questionNumber = (data.questionNumber || 0) + 1;
 
   // Save the updated queue
   await fs.writeFile(queuePath, JSON.stringify(data, null, 2), "utf-8");
+
 
   const embed = new EmbedBuilder()
     .setColor(413059)
     .setTitle(`Daily Question #${data.questionNumber}`)
     .setAuthor({ name: nickname, iconURL: avatar })
     .setDescription(questionText);
+  if (category) embed.addFields({ name: "Category", value: category });
+  if (weekDay) embed.addFields({ name: "Week Day", value: weekDay });
 
   try {
     await channel.send({
