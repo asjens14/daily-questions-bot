@@ -1,47 +1,31 @@
 import { EmbedBuilder } from "discord.js";
-import fs from "node:fs/promises";
+import { getQuestion, deleteQuestion } from "../database/questions.js";
+import { incrementQuestionNumber } from "../database/settings.js";
+// import fs from "node:fs/promises";
 // import { client } from "../bot.js";
-const queuePath = new URL("../../queue.json", import.meta.url);
+// const queuePath = new URL("../../queue.json", import.meta.url);
 
 export async function sendDailyQuestion(channel) {
   console.log("Sending daily question...");
-  // const channelId = process.env.DAILY_QUESTION_CHANNEL_ID;
-  // if (!channelId) {
-  //   console.error("DAILY_QUESTION_CHANNEL_ID not set in .env");
-  //   return;
-  // }
 
-  // Read the queue
-  let data;
-  try {
-    const file = await fs.readFile(queuePath, "utf-8");
-    data = JSON.parse(file);
-  } catch (err) {
-    console.error("Could not read queue.json:", err);
-    return;
-  }
+  const question = getQuestion();
 
-  if (!data.questions || data.questions.length === 0) {
+  if (!question) {
     console.log("No questions in the queue.");
     return;
   }
 
+  const questionNumber = incrementQuestionNumber();
 
-  // Get and remove the first question
-  const { avatar, nickname, questionText, weekDay, category } = data.questions.shift();
-  data.questionNumber = (data.questionNumber || 0) + 1;
-
-  // Save the updated queue
-  await fs.writeFile(queuePath, JSON.stringify(data, null, 2), "utf-8");
-
+  deleteQuestion(question.id);
 
   const embed = new EmbedBuilder()
     .setColor(413059)
-    .setTitle(`Daily Question #${data.questionNumber}`)
-    .setAuthor({ name: nickname, iconURL: avatar })
-    .setDescription(questionText);
-  if (category) embed.addFields({ name: "Category", value: category });
-  if (weekDay) embed.addFields({ name: "Week Day", value: weekDay });
+    .setTitle(`Daily Question #${questionNumber}`)
+    .setAuthor({ name: question.nickname, iconURL: question.avatar })
+    .setDescription(question.question_text);
+  if (question.category) embed.addFields({ name: "Category", value: question.category });
+  if (question.weekDay) embed.addFields({ name: "Week Day", value: question.weekDay });
 
   try {
     await channel.send({
@@ -49,7 +33,55 @@ export async function sendDailyQuestion(channel) {
       embeds: [embed],
     });
     console.log("Daily question sent!");
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Failed to send daily question:", error);
   }
+  // // const channelId = process.env.DAILY_QUESTION_CHANNEL_ID;
+  // // if (!channelId) {
+  // //   console.error("DAILY_QUESTION_CHANNEL_ID not set in .env");
+  // //   return;
+  // // }
+
+  // // Read the queue
+  // let data;
+  // try {
+  //   const file = await fs.readFile(queuePath, "utf-8");
+  //   data = JSON.parse(file);
+  // } catch (err) {
+  //   console.error("Could not read queue.json:", err);
+  //   return;
+  // }
+
+  // if (!data.questions || data.questions.length === 0) {
+  //   console.log("No questions in the queue.");
+  //   return;
+  // }
+
+
+  // // Get and remove the first question
+  // const { avatar, nickname, questionText, weekDay, category } = data.questions.shift();
+  // data.questionNumber = (data.questionNumber || 0) + 1;
+
+  // // Save the updated queue
+  // await fs.writeFile(queuePath, JSON.stringify(data, null, 2), "utf-8");
+
+
+  // const embed = new EmbedBuilder()
+  //   .setColor(413059)
+  //   .setTitle(`Daily Question #${data.questionNumber}`)
+  //   .setAuthor({ name: nickname, iconURL: avatar })
+  //   .setDescription(questionText);
+  // if (category) embed.addFields({ name: "Category", value: category });
+  // if (weekDay) embed.addFields({ name: "Week Day", value: weekDay });
+
+  // try {
+  //   await channel.send({
+  //     content: `<@&${process.env.PING_ROLE_ID}>`,
+  //     embeds: [embed],
+  //   });
+  //   console.log("Daily question sent!");
+  // } catch (error) {
+  //   console.error("Failed to send daily question:", error);
+  // }
 }
