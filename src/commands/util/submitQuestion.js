@@ -16,38 +16,38 @@ export default {
             .setRequired(true)
         )
     )
-    .addSubcommand((subcommand) =>
-      subcommand
-        .setName("weekday")
-        .setDescription("Submit a question for a specific weekday with a category.")
-        .addStringOption((option) =>
-          option
-            .setName("question")
-            .setDescription("Submit your daily question")
-            .setRequired(true)
-        )
-        .addStringOption((option) =>
-          option
-            .setName("category")
-            .setDescription("Category name for the question")
-            .setRequired(true)
-        )
-        .addStringOption((option) =>
-          option
-            .setName("week_day")
-            .setDescription("Set a specific week day for the question to be sent")
-            .setRequired(true)
-            .addChoices(
-              { name: "Monday", value: "monday" },
-              { name: "Tuesday", value: "tuesday" },
-              { name: "Wednesday", value: "wednesday" },
-              { name: "Thursday", value: "thursday" },
-              { name: "Friday", value: "friday" },
-              { name: "Saturday", value: "saturday" },
-              { name: "Sunday", value: "sunday" }
-            )
-        )
-    )
+    // .addSubcommand((subcommand) =>
+    //   subcommand
+    //     .setName("weekday")
+    //     .setDescription("Submit a question for a specific weekday with a category.")
+    //     .addStringOption((option) =>
+    //       option
+    //         .setName("question")
+    //         .setDescription("Submit your daily question")
+    //         .setRequired(true)
+    //     )
+    //     .addStringOption((option) =>
+    //       option
+    //         .setName("category")
+    //         .setDescription("Category name for the question")
+    //         .setRequired(true)
+    //     )
+    //     .addStringOption((option) =>
+    //       option
+    //         .setName("week_day")
+    //         .setDescription("(NOT IMPLEMENTED FULLY) Set a specific week day for the question to be sent")
+    //         .setRequired(true)
+    //         .addChoices(
+    //           { name: "Monday", value: "monday" },
+    //           { name: "Tuesday", value: "tuesday" },
+    //           { name: "Wednesday", value: "wednesday" },
+    //           { name: "Thursday", value: "thursday" },
+    //           { name: "Friday", value: "friday" },
+    //           { name: "Saturday", value: "saturday" },
+    //           { name: "Sunday", value: "sunday" }
+    //         )
+    //     )
+    // )
     .setDescription("Submit a question for the daily question prompt."),
   async execute(interaction) {
     await interaction.reply({
