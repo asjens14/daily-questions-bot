@@ -6,6 +6,14 @@ export default {
     .setName("dqsend")
     .setDescription("Force send the daily question prompt to the channel."),
   async execute(interaction) {
+    if (!interaction.member.roles.cache.some((role) => process.env.MOD_ROLE_IDS?.split(",").includes(role.id))) {
+      await interaction.reply({
+        content: "You do not have permission to use this command.",
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
+    
     await interaction.reply({
       content: "Daily question prompt sent.",
       flags: MessageFlags.Ephemeral,
