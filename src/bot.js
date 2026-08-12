@@ -12,6 +12,9 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import "./utils/scheduler.js";
 
+import db from "./database/db.js";
+import { initializeDatabase } from "./database/initialize.js";
+
 dotenv.config();
 
 const client = new Client({
@@ -25,7 +28,7 @@ const client = new Client({
   partials: [Partials.Channel],
 });
 
-client.once("ready", () => {
+client.once("clientReady", () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
 
@@ -113,6 +116,8 @@ client.on("messageCreate", async (message) => {
 //     );
 //   }
 // });
+
+initializeDatabase();
 
 client.login(process.env.BOT_TOKEN);
 
