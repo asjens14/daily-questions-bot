@@ -17,6 +17,12 @@ const deleteQuestionStmt = db.prepare(`
     WHERE id = ?
 `);
 
+const updateQuestionCount = db.prepare(`
+    UPDATE settings
+    SET value = ?
+    WHERE key = 'questionNumber'
+`);
+
 export function saveQuestion(avatar, nickname, questionText, weekDay = null, category = null) {
 
     return insertQuestion.run(avatar, nickname, questionText, weekDay, category);
@@ -31,4 +37,8 @@ export function getQuestion() {
 //delete question
 export function deleteQuestion(id) {
     return deleteQuestionStmt.run(id);
+}
+
+export function updateQuestionNumber(newNumber) {
+    return updateQuestionCount.run(newNumber);
 }
