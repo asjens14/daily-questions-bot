@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import { getQuestion, deleteQuestion } from "../database/questions.js";
+import { deleteQuestion, getQuestion } from "../database/questions.js";
 import { incrementQuestionNumber } from "../database/settings.js";
 // import fs from "node:fs/promises";
 // import { client } from "../bot.js";
@@ -26,6 +26,7 @@ export async function sendDailyQuestion(channel) {
     .setDescription(question.question_text);
   if (question.category) embed.addFields({ name: "Category", value: question.category });
   if (question.weekDay) embed.addFields({ name: "Week Day", value: question.weekDay });
+  embed.setFooter({ text: "-------------------- \nSubmit your own question with `/dq simple`" });
 
   try {
     await channel.send({
