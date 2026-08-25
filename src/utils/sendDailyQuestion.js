@@ -12,6 +12,9 @@ export async function sendDailyQuestion(channel) {
 
   if (!question) {
     console.log("No questions in the queue.");
+    await channel.send({
+      content: `<@&${process.env.PING_ROLE_ID}> No questions in the queue! Submit your own question with \`/dq simple\` or \`/dq poll\`! In the meantime, What is something positive that happened yesterday?`
+    });
     return;
   }
 
@@ -29,11 +32,31 @@ export async function sendDailyQuestion(channel) {
   embed.setFooter({ text: "-------------------- \nSubmit your own question with `/dq simple`" });
 
   try {
-    await channel.send({
-      content: `<@&${process.env.PING_ROLE_ID}>`,
-      embeds: [embed],
-    });
-    console.log("Daily question sent!");
+    const isPoll = question.question_type === "poll";
+    const options = question.poll_options ? JSON.parse(question.poll_options) : [];
+
+    if (isPoll && options.length >= 2) {
+      await channel.send({
+        content: `<@&${process.env.PING_ROLE_ID}>`,
+        embeds: [embed]
+      });
+
+      await channel.send({
+        poll: {
+          question: { text: question.question_text },
+          answers: options.map((text) => ({ text })),
+          duration: 24,
+          allowMultiselect: Boolean(question.allow_multiselect)
+        }
+      });
+      console.log("Question sent")
+    } else {
+      await channel.send({
+        content: `<@&${process.env.PING_ROLE_ID}>`,
+        embeds: [embed]
+      });
+      console.log("Question sent")
+    }
   }
   catch (error) {
     console.error("Failed to send daily question:", error);

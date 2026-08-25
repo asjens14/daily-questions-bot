@@ -1,6 +1,40 @@
 import { MessageFlags, SlashCommandBuilder } from "discord.js";
 import { handleQuestionSubmit } from "../../utils/handleQuestionSubmit.js";
 
+const POLL_OPTION_COUNT = 10;
+
+function getPollSubmission(interaction, isPoll) {
+  if (!isPoll) {
+    return {
+      questionType: "normal",
+      pollOptions: null,
+      allowMultiselect: false,
+    };
+  }
+
+  const pollOptions = Array.from(
+    { length: POLL_OPTION_COUNT },
+    (_, index) => interaction.options.getString(`option_${index + 1}`)
+  ).filter(Boolean);
+
+  return {
+    questionType: "poll",
+    pollOptions,
+    allowMultiselect: interaction.options.getBoolean("multiselect") ?? false,
+  };
+}
+
+function getWeekdaySubmission(interaction, subcommand) {
+  if (subcommand !== "weekday") {
+    return { weekDay: null, category: null };
+  }
+
+  return {
+    weekDay: interaction.options.getString("week_day"),
+    category: interaction.options.getString("category"),
+  };
+}
+
 export default {
   data: new SlashCommandBuilder()
     .setName("dq")
@@ -14,6 +48,83 @@ export default {
             .setName("question")
             .setDescription("Submit your daily question")
             .setRequired(true)
+        )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("poll")
+        .setDescription("Submit a poll question")
+        .addStringOption((option) =>
+          option
+            .setName("question")
+            .setDescription("Poll question text")
+            .setRequired(true)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("option_1")
+            .setDescription("First poll option")
+            .setRequired(true)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("option_2")
+            .setDescription("Second poll option")
+            .setRequired(true)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("option_3")
+            .setDescription("Third poll option (optional)")
+            .setRequired(false)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("option_4")
+            .setDescription("Fourth poll option (optional)")
+            .setRequired(false)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("option_5")
+            .setDescription("Fifth poll option (optional)")
+            .setRequired(false)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("option_6")
+            .setDescription("Sixth poll option (optional)")
+            .setRequired(false)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("option_7")
+            .setDescription("Seventh poll option (optional)")
+            .setRequired(false)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("option_8")
+            .setDescription("Eighth poll option (optional)")
+            .setRequired(false)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("option_9")
+            .setDescription("Ninth poll option (optional)")
+            .setRequired(false)
+        )
+        .addStringOption((option) =>
+          option
+            .setName("option_10")
+            .setDescription("Tenth poll option (optional)")
+            .setRequired(false)
+        )
+        .addBooleanOption((option) =>
+          option
+            .setName("multiselect")
+            .setDescription("Allow choosing multiple answers")
+            .setRequired(false)
         )
     )
     // .addSubcommand((subcommand) =>
@@ -50,31 +161,31 @@ export default {
     // )
     .setDescription("Submit a question for the daily question prompt."),
   async execute(interaction) {
+    const subcommand = interaction.options.getSubcommand();
+    const isPoll = subcommand === "poll";
+    const questionText = interaction.options.getString("question");
+    const displayName = interaction.member?.displayName || interaction.user.username;
+    const channelId = process.env.DQ_APPROVAL_CHANNEL_ID;
+
+    const { questionType, pollOptions, allowMultiselect } = getPollSubmission(interaction, isPoll);
+    const { weekDay, category } = getWeekdaySubmission(interaction, subcommand);
+
     await interaction.reply({
       content: "Question Submitted",
       flags: MessageFlags.Ephemeral,
     });
-    const displayName =
-      interaction.member?.displayName || interaction.user.username;
-
-    // Fetch the approval channel and pass it to handleQuestionSubmit
-    const channelId = process.env.DQ_APPROVAL_CHANNEL_ID;
     const channel = await interaction.client.channels.fetch(channelId);
-    // Determine if the weekday subcommand was used
-    const subcommand = interaction.options.getSubcommand();
-    let weekDay = null;
-    let category = null;
-    if (subcommand === "weekday") {
-      weekDay = interaction.options.getString("week_day");
-      category = interaction.options.getString("category");
-    }
+
     await handleQuestionSubmit(
       channel,
       interaction.user.avatarURL(),
       displayName,
-      interaction.options.getString("question"),
+      questionText,
       weekDay,
-      category
+      category,
+      questionType,
+      pollOptions,
+      allowMultiselect
     );
   },
 };

@@ -8,7 +8,17 @@ import {
 
 import { saveQuestion } from "./saveQuestion.js";
 
-export async function sendToMods(channel, avatar, nickname, questionText, weekDay = null, category = null) {
+export async function sendToMods(
+  channel,
+  avatar,
+  nickname,
+  questionText,
+  weekDay = null,
+  category = null,
+  questionType = "normal",
+  pollOptions = null,
+  allowMultiselect = false
+) {
   const embed = new EmbedBuilder()
     .setColor(413059)
     .setTitle("New Daily Question Submission")
@@ -16,6 +26,12 @@ export async function sendToMods(channel, avatar, nickname, questionText, weekDa
     .setDescription(questionText);
   if (category) embed.addFields({ name: "Category", value: category });
   if (weekDay) embed.addFields({ name: "Week Day", value: weekDay });
+  if (questionType === "poll") {
+    embed.addFields({ name: "Type", value: "Poll" });
+    if (Array.isArray(pollOptions) && pollOptions.length > 0) {
+      embed.addFields({ name: "Poll Options", value: pollOptions.map((option, index) => `${index + 1}. ${option}`).join("\n") });
+    }
+  }
 
   const row = new ActionRowBuilder().addComponents(
     new ButtonBuilder()
@@ -45,7 +61,7 @@ export async function sendToMods(channel, avatar, nickname, questionText, weekDa
         embeds: [embed],
         components: [],
       });
-      await saveQuestion(avatar, nickname, questionText, weekDay, category);
+      await saveQuestion(avatar, nickname, questionText, weekDay, category, questionType, pollOptions, allowMultiselect);
     } else if (interaction.customId === "reject") {
       await interaction.update({
         content: "❌ Rejected",
