@@ -7,15 +7,18 @@ export async function handleQuestionSubmit(
   nickname,
   questionText,
   weekDay = null,
-  category = null
+  category = null,
+  questionType = "normal",
+  pollOptions = null,
+  allowMultiselect = false
 ) {
   console.log("message saved");
 
   const SEND_TO_MODS = true;
 
   if (SEND_TO_MODS) {
-    sendToMods(channel, avatar, nickname, questionText, weekDay, category);
+    sendToMods(channel, avatar, nickname, questionText, weekDay, category, questionType, pollOptions, allowMultiselect);
   } else {
-    saveQuestion(avatar, nickname, questionText, weekDay, category);
+    saveQuestion(avatar, nickname, questionText, weekDay, category, questionType, pollOptions, allowMultiselect);
   }
 }

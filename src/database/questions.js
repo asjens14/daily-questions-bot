@@ -2,8 +2,8 @@ import db from "./db.js";
 // insert question
 const insertQuestion = db.prepare(`
     INSERT INTO questions
-    (avatar, nickname, question_text, weekday, category)
-    VALUES (?, ?, ?, ?, ?)
+    (avatar, nickname, question_text, weekday, category, question_type, poll_options, allow_multiselect)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `);
 
 const getQuestionStmt = db.prepare(`
@@ -23,9 +23,12 @@ const updateQuestionCount = db.prepare(`
     WHERE key = 'questionNumber'
 `);
 
-export function saveQuestion(avatar, nickname, questionText, weekDay = null, category = null) {
+export function saveQuestion(avatar, nickname, questionText, weekDay = null, category = null, questionType = "normal", pollOptions = null, allowMultiselect = false) {
 
-    return insertQuestion.run(avatar, nickname, questionText, weekDay, category);
+    const serializedOptions = Array.isArray(pollOptions) ? JSON.stringify(pollOptions) : null;
+    const allowMulti = allowMultiselect ? 1 : 0;
+
+    return insertQuestion.run(avatar, nickname, questionText, weekDay, category, questionType, serializedOptions, allowMulti);
 }
 
 //get question

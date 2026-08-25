@@ -2,10 +2,19 @@
 // const filePath = new URL("../../queue.json", import.meta.url);
 import { saveQuestion as saveQuestionRecord } from "../database/questions.js";
 
-export async function saveQuestion(avatar, nickname, questionText, weekDay = null, category = null) {
+export async function saveQuestion(
+  avatar,
+  nickname,
+  questionText,
+  weekDay = null,
+  category = null,
+  questionType = "normal",
+  pollOptions = null,
+  allowMultiselect = false
+) {
   console.log("Saving question...");
 
-  saveQuestionRecord(avatar, nickname, questionText, weekDay, category);
+  saveQuestionRecord(avatar, nickname, questionText, weekDay, category, questionType, pollOptions, allowMultiselect);
 
   // let data;
   // try {

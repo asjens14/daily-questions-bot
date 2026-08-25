@@ -18,46 +18,32 @@ function ensureQuestionsTable() {
 				nickname TEXT NOT NULL,
 				question_text TEXT NOT NULL,
 				weekday TEXT,
-				category TEXT
+				category TEXT,
+				question_type TEXT NOT NULL DEFAULT 'normal',
+				poll_options TEXT,
+				allow_multiselect INTEGER NOT NULL DEFAULT 0
 			)
 		`);
 		return;
 	}
 
-	const avatarColumn = tableInfo.find((column) => column.name === "avatar");
-	const questionTextColumn = tableInfo.find((column) => column.name === "question_text");
-	const needsMigration =
-		!avatarColumn ||
-		avatarColumn.notnull !== 0 ||
-		!questionTextColumn ||
-		questionTextColumn.type.toUpperCase() !== "TEXT" ||
-		questionTextColumn.notnull !== 1;
+	const hasQuestionType = tableInfo.some((column) => column.name === "question_type");
+	const hasPollOptions = tableInfo.some((column) => column.name === "poll_options");
+	const hasAllowMultiselect = tableInfo.some((column) => column.name === "allow_multiselect");
 
-	if (!needsMigration) {
-		return;
-	}
-
-	const migrateQuestionsTable = db.transaction(() => {
-		db.exec("ALTER TABLE questions RENAME TO questions_legacy");
-		db.exec(`
-			CREATE TABLE questions (
-				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				avatar TEXT,
-				nickname TEXT NOT NULL,
-				question_text TEXT NOT NULL,
-				weekday TEXT,
-				category TEXT
-			)
-		`);
-		db.exec(`
-			INSERT INTO questions (id, avatar, nickname, question_text, weekday, category)
-			SELECT id, avatar, nickname, COALESCE(CAST(question_text AS TEXT), ''), weekday, category
-			FROM questions_legacy
-		`);
-		db.exec("DROP TABLE questions_legacy");
+	const migrate = db.transaction(() => {
+		if (!hasQuestionType) {
+			db.exec("ALTER TABLE questions ADD COLUMN question_type TEXT NOT NULL DEFAULT 'normal'");
+		}
+		if (!hasPollOptions) {
+			db.exec("ALTER TABLE questions ADD COLUMN poll_options TEXT");
+		}
+		if (!hasAllowMultiselect) {
+			db.exec("ALTER TABLE questions ADD COLUMN allow_multiselect INTEGER NOT NULL DEFAULT 0");
+		}
 	});
 
-	migrateQuestionsTable();
+	migrate();
 }
 
 export function ensureDatabaseSchema() {
