@@ -29,7 +29,7 @@ export async function sendDailyQuestion(channel) {
     .setDescription(question.question_text);
   if (question.category) embed.addFields({ name: "Category", value: question.category });
   if (question.weekDay) embed.addFields({ name: "Week Day", value: question.weekDay });
-  embed.setFooter({ text: "-------------------- \nSubmit your own question with `/dq simple`" });
+  embed.setFooter({ text: "-------------------- \nSubmit your own question with `/dq simple` or `/dq poll`" });
 
   try {
     const isPoll = question.question_type === "poll";
