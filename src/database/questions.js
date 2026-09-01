@@ -23,6 +23,12 @@ const updateQuestionCount = db.prepare(`
     WHERE key = 'questionNumber'
 `);
 
+const getQuestionQueue = db.prepare(`
+    SELECT * From questions
+    ORDER BY id ASC
+    LIMIT 10
+`);
+
 export function saveQuestion(avatar, nickname, questionText, weekDay = null, category = null, questionType = "normal", pollOptions = null, allowMultiselect = false) {
 
     const serializedOptions = Array.isArray(pollOptions) ? JSON.stringify(pollOptions) : null;
@@ -44,4 +50,8 @@ export function deleteQuestion(id) {
 
 export function updateQuestionNumber(newNumber) {
     return updateQuestionCount.run(newNumber);
+}
+
+export function getQueue() {
+    return getQuestionQueue.all();
 }
