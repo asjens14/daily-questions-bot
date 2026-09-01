@@ -44,7 +44,6 @@ export default {
     }
 
     const queue = getQueue();
-    console.log("Current question queue:", queue);
     const embed = new EmbedBuilder()
       .setTitle("Current Question Queue")
       .setColor(413059);
