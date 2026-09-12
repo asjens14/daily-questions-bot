@@ -10,7 +10,7 @@ export default {
       description: "List of available commands:",
       color: 413059,
       fields: [
-        { name: "General use", value: "`/help` `/dq simple` `/dq poll`" },
+        { name: "General use", value: "`/help` `/dq simple` `/dq poll` `/gamble`" },
         { name: "Mod use only", value: "`/dqsend` `/queue` `/updatenum`" },
       ],
     };
