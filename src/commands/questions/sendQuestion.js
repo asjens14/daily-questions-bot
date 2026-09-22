@@ -1,16 +1,13 @@
 import { MessageFlags, SlashCommandBuilder } from "discord.js";
 import { sendDailyQuestion } from "../../utils/sendDailyQuestion.js";
+import permissionCheck from "../../utils/permissionCheck.js";
 
 export default {
   data: new SlashCommandBuilder()
     .setName("dqsend")
     .setDescription("Force send the daily question prompt to the channel."),
   async execute(interaction) {
-    if (!interaction.member.roles.cache.some((role) => process.env.MOD_ROLE_IDS?.split(",").includes(role.id))) {
-      await interaction.reply({
-        content: "You do not have permission to use this command.",
-        flags: MessageFlags.Ephemeral,
-      });
+    if (!(await permissionCheck(interaction))) {
       return;
     }
     

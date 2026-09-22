@@ -1,5 +1,6 @@
 import { EmbedBuilder, MessageFlags, SlashCommandBuilder } from "discord.js";
 import { getQueue } from "../../database/questions.js";
+import permissionCheck from "../../utils/permissionCheck.js";
 
 function formatQueueEntry(question) {
   const lines = [question.question_text];
@@ -35,11 +36,7 @@ export default {
     .setName("queue")
     .setDescription("View the current queue of questions."),
   async execute(interaction) {
-    if (!interaction.member.roles.cache.some((role) => process.env.MOD_ROLE_IDS?.split(",").includes(role.id))) {
-      await interaction.reply({
-        content: "You do not have permission to use this command.",
-        flags: MessageFlags.Ephemeral,
-      });
+    if (!(await permissionCheck(interaction))) {
       return;
     }
 
