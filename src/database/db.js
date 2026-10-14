@@ -46,8 +46,67 @@ function ensureQuestionsTable() {
 	migrate();
 }
 
+function ensureTasksTable() {
+	const tableInfo = db.prepare("PRAGMA table_info(tasks)").all();
+
+	if (tableInfo.length === 0) {
+		db.exec(`
+			CREATE TABLE IF NOT EXISTS tasks (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				Description TEXT NOT NULL,
+				author_name TEXT NOT NULL,
+				author_id TEXT NOT NULL,
+				priority TEXT NOT NULL,
+				target_date TEXT,
+				assignee_names TEXT,
+				assignee_ids TEXT,
+				reminders_sent TEXT NOT NULL DEFAULT '[]'
+			)
+		`);
+	}
+}
+
+function ensureTaskCommentsTable() {
+	const tableInfo = db.prepare("PRAGMA table_info(task_comments)").all();
+
+	if (tableInfo.length === 0) {
+		db.exec(`
+			CREATE TABLE IF NOT EXISTS task_comments (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				task_id INTEGER NOT NULL,
+				author TEXT NOT NULL,
+				text TEXT NOT NULL,
+				created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+				FOREIGN KEY (task_id) REFERENCES tasks(id)
+			)
+		`);
+	}
+}
+
+function ensureTaskAuditTable() {
+	const tableInfo = db.prepare("PRAGMA table_info(task_audit)").all();
+
+	if (tableInfo.length === 0) {
+		db.exec(`
+			CREATE TABLE IF NOT EXISTS task_audit (
+				id INTEGER PRIMARY KEY AUTOINCREMENT,
+				task_id INTEGER NOT NULL,
+				action TEXT NOT NULL,
+				user TEXT NOT NULL,
+				status TEXT NOT NULL DEFAULT 'active',
+				last_known_state TEXT,
+				timestamp TEXT DEFAULT CURRENT_TIMESTAMP
+			)
+		`);
+	}
+}
+
+
 export function ensureDatabaseSchema() {
 	ensureQuestionsTable();
+	ensureTasksTable();
+	ensureTaskCommentsTable();
+	ensureTaskAuditTable();
 
 	db.exec(`
 		CREATE TABLE IF NOT EXISTS settings (
