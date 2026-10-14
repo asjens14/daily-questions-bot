@@ -11,6 +11,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import "./utils/scheduler.js";
+import { startTaskReminderLoop } from "./utils/taskReminder.js";
 
 import db from "./database/db.js";
 import { initializeDatabase } from "./database/initialize.js";
@@ -30,6 +31,8 @@ const client = new Client({
 
 client.once("clientReady", () => {
   console.log(`Logged in as ${client.user.tag}`);
+
+  startTaskReminderLoop(client);
 });
 
 client.commands = new Collection();
