@@ -1,5 +1,6 @@
 // src/utils/taskSystem.js
 import { EmbedBuilder } from "discord.js";
+import permissionCheck from "./permissionCheck.js";
 
 export const TASK_CONFIG = {
   publicChannels: (process.env.TASK_PUBLIC_CHANNEL_IDS || "")
@@ -23,15 +24,17 @@ export function hasTaskPermission(interaction) {
   const userId = interaction.user.id;
   if (TASK_CONFIG.superUserId && userId === TASK_CONFIG.superUserId) return true;
 
-  const memberRoles = interaction.member && interaction.member.roles && interaction.member.roles.cache
-    ? interaction.member.roles.cache
-    : null;
+  return permissionCheck(interaction);
 
-  if (!memberRoles) return false;
+  // const memberRoles = interaction.member && interaction.member.roles && interaction.member.roles.cache
+  //   ? interaction.member.roles.cache
+  //   : null;
 
-  return memberRoles.some(function (role) {
-    return TASK_CONFIG.allowedRoleIds.includes(role.id);
-  });
+  // if (!memberRoles) return false;
+
+  // return memberRoles.some(function (role) {
+  //   return TASK_CONFIG.allowedRoleIds.includes(role.id);
+  // });
 }
 
 export function isValidDateFormat(dateStr) {
