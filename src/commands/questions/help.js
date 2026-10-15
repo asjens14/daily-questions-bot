@@ -11,7 +11,8 @@ export default {
       color: 413059,
       fields: [
         { name: "General use", value: "`/help` `/dq simple` `/dq poll` `/gamble`" },
-        { name: "Mod use only", value: "`/dqsend` `/queue` `/updatenum`" },
+        { name: "Mod use only - Questions", value: "`/dqsend` `/queue` `/updatenum`" },
+        { name: "Mod use only - Tasks", value: "`/task"}
       ],
     };
 
