@@ -17,6 +17,7 @@ export const TASK_CONFIG = {
 
 export function isHidden(interaction) {
   if (!interaction || !interaction.channelId) return true;
+  if (TASK_CONFIG.publicChannels.length === 0) return false;
   return !TASK_CONFIG.publicChannels.includes(interaction.channelId);
 }
 
@@ -149,8 +150,8 @@ export function buildTaskListEmbed(tasks, title, color, filterAssigneeId) {
 
   for (var i = 0; i < tasks.length; i += 1) {
     var t = tasks[i];
-    var ids = Array.isArray(t.assignee_ids) ? t.assignee_ids : [];
-    if (filterAssigneeId && !ids.includes(filterAssigneeId)) continue;
+    var ids = Array.isArray(t.assignee_ids) ? t.assignee_ids.map(String) : [];
+    if (filterAssigneeId && !ids.includes(String(filterAssigneeId))) continue;
 
     taskCount += 1;
     var prio = t.priority || "Unassigned";
