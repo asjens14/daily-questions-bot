@@ -1,25 +1,26 @@
 // src/commands/tasks/taskmaster.js
 import { MessageFlags, SlashCommandBuilder } from "discord.js";
-import {
-  addTaskComment,
-  createTask,
-  deleteTask,
-  getAllTasks,
-  getTask,
-  getTaskComments,
-  updateAssignees,
-  updatePriority,
-  updateTargetDate,
-} from "../../database/tasks.js";
 import { logAuditAction } from "../../database/taskAuditLog.js";
 import {
-  TASK_CONFIG,
-  buildSingleTaskEmbed,
-  buildTaskListEmbed,
-  hasTaskPermission,
-  isHidden,
-  isValidDateFormat,
-  notifyUser,
+    addTaskComment,
+    createTask,
+    deleteTask,
+    getAllTasks,
+    getTask,
+    getTaskComments,
+    updateAssignees,
+    updatePriority,
+    updateTargetDate,
+} from "../../database/tasks.js";
+import {
+    TASK_CONFIG,
+    buildSingleTaskEmbed,
+    buildTaskListEmbed,
+    hasTaskPermission,
+    isHidden,
+    isValidDateFormat,
+    notifyUser,
+    userHasAllowedRole,
 } from "../../utils/taskSystem.js";
 
 function deny(interaction) {
@@ -72,6 +73,9 @@ export default {
     })
     .addSubcommand(function (s) {
       return s.setName("mylist").setDescription("List tasks assigned to you");
+    })
+    .addSubcommand(function (s) {
+      return s.setName("mytasklist").setDescription("List tasks assigned to you");
     })
     .addSubcommand(function (s) {
       return s
@@ -210,7 +214,7 @@ export default {
       return interaction.reply({ embeds: [embedList], flags: ephemeralFlag });
     }
 
-    if (sub === "mylist") {
+    if (sub === "mylist" || sub === "mytasklist") {
       var myTasks = getAllTasks();
       var mine = buildTaskListEmbed(myTasks, "📋 Tasks Assigned to You", 0x9b59b6, interaction.user.id);
       if (!mine) {
@@ -363,9 +367,7 @@ export default {
 
       var isAuthor = String(interaction.user.id) === String(taskDelete.author_id);
       var isOwner = TASK_CONFIG.superUserId && String(interaction.user.id) === String(TASK_CONFIG.superUserId);
-      var isSteward = interaction.member.roles.cache.some(function (role) {
-        return TASK_CONFIG.allowedRoleIds.includes(role.id);
-      });
+      var isSteward = userHasAllowedRole(interaction);
 
       if (!isAuthor && !isOwner && !isSteward) {
         return interaction.reply({

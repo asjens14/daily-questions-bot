@@ -21,21 +21,24 @@ export function isHidden(interaction) {
   return !TASK_CONFIG.publicChannels.includes(interaction.channelId);
 }
 
+export function userHasAllowedRole(interaction) {
+  if (!interaction || !interaction.member || !interaction.member.roles || !interaction.member.roles.cache) {
+    return false;
+  }
+
+  const allowedRoleIds = TASK_CONFIG.allowedRoleIds.map(String);
+  if (allowedRoleIds.length === 0) return false;
+
+  return interaction.member.roles.cache.some(function (role) {
+    return allowedRoleIds.includes(String(role.id));
+  });
+}
+
 export function hasTaskPermission(interaction) {
   const userId = interaction.user.id;
   if (TASK_CONFIG.superUserId && userId === TASK_CONFIG.superUserId) return true;
 
-  return permissionCheck(interaction);
-
-  // const memberRoles = interaction.member && interaction.member.roles && interaction.member.roles.cache
-  //   ? interaction.member.roles.cache
-  //   : null;
-
-  // if (!memberRoles) return false;
-
-  // return memberRoles.some(function (role) {
-  //   return TASK_CONFIG.allowedRoleIds.includes(role.id);
-  // });
+  return userHasAllowedRole(interaction) || permissionCheck(interaction);
 }
 
 export function isValidDateFormat(dateStr) {
