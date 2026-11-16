@@ -1,3 +1,4 @@
+import "dotenv/config";
 import {
   Client,
   Collection,
@@ -6,7 +7,6 @@ import {
   MessageFlags,
   Partials,
 } from "discord.js";
-import dotenv from "dotenv";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -15,8 +15,6 @@ import { startTaskReminderLoop } from "./utils/taskReminder.js";
 
 import db from "./database/db.js";
 import { initializeDatabase } from "./database/initialize.js";
-
-dotenv.config();
 
 const client = new Client({
   intents: [
