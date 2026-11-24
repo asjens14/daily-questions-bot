@@ -89,6 +89,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 client.on("messageCreate", async (message) => {
+  const disabledChannelIds = (process.env.DISABLE_RAT_CHANNEL_IDS || "")
+    .split(",")
+    .map((channelId) => channelId.trim())
+    .filter(Boolean);
+
+  if (disabledChannelIds.includes(String(message.channelId))) return;
+
   const regex = /\bcraz(y|ier|iest|iness|ily|ed|es)?\b/i;
 
   if (regex.test(message.content) && !message.author.bot) {
